@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -31,5 +32,9 @@ class Product extends Model
 
     public function formattedPrice() {
         return '$' . number_format($this->price / 100, 2);
+    }
+
+    public function getRouteKeyName(): string {
+        return 'slug';
     }
 }

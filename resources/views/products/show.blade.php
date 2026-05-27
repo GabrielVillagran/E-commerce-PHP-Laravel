@@ -45,24 +45,70 @@
 
                         <div class="mt-6">
                             @if($product->stock > 0)
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                                    In stock: {{ $product->stock }}
-                                </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                                In stock: {{ $product->stock }}
+                            </span>
                             @else
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
-                                    Out of stock
-                                </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-800">
+                                Out of stock
+                            </span>
                             @endif
                         </div>
 
                         <div class="mt-8">
-                            <button
-                                type="button"
-                                disabled
-                                class="w-full md:w-auto bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed"
-                            >
-                                Add to Cart - Coming Next
-                            </button>
+                            @if(session('success'))
+                            <div class="mb-6 bg-green-100 text-green-800 px-4 py-3 rounded-lg">
+                                {{ session('success') }}
+                            </div>
+                            @endif
+
+                            @if(session('error'))
+                            <div class="mb-6 bg-red-100 text-red-800 px-4 py-3 rounded-lg">
+                                {{ session('error') }}
+                            </div>
+                            @endif
+
+                            @if($product->stock > 0)
+                            <form method="POST" action="{{ route('cart.store', $product) }}" class="mt-8">
+                                @csrf
+
+                                <div class="mb-4">
+                                    <label for="quantity" class="block text-sm font-medium text-gray-700">
+                                        Quantity
+                                    </label>
+
+                                    <input
+                                        id="quantity"
+                                        type="number"
+                                        name="quantity"
+                                        value="1"
+                                        min="1"
+                                        max="{{ $product->stock }}"
+                                        class="mt-1 w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+
+                                    @error('quantity')
+                                    <p class="text-sm text-red-600 mt-2">
+                                        {{ $message }}
+                                    </p>
+                                    @enderror
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="w-full md:w-auto bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-700">
+                                    Add to Cart
+                                </button>
+                            </form>
+                            @else
+                            <div class="mt-8">
+                                <button
+                                    type="button"
+                                    disabled
+                                    class="w-full md:w-auto bg-gray-400 text-white px-6 py-3 rounded-lg cursor-not-allowed">
+                                    Out of Stock
+                                </button>
+                            </div>
+                            @endif
 
                             <p class="text-sm text-gray-500 mt-3">
                                 We will implement the cart in the next phase.

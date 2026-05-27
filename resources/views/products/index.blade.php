@@ -1,28 +1,41 @@
 <x-app-layout>
-<x-slot name="header">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Mini Shop
-            </h2>
-            <p class="text-sm text-gray-500 mt-1">
-                Browse our products and start building your cart.
-            </p>
-        </div>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Mini Shop
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    Browse our products and start building your cart.
+                </p>
+            </div>
 
-        @auth
-            <a href="{{ route('profile.edit') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
-                My Profile
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
-                Login
-            </a>
-        @endauth
-    </div>
-</x-slot>
+            @auth
+                <a href="{{ route('profile.edit') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                    My Profile
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-800">
+                    Login
+                </a>
+            @endauth
+        </div>
+    </x-slot>
+
     <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            @if(session('success'))
+                <div class="mb-6 bg-green-100 text-green-800 px-4 py-3 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-6 bg-red-100 text-red-800 px-4 py-3 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <div class="mb-6 bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">
@@ -72,7 +85,7 @@
                                 {{ $product->name }}
                             </h3>
 
-                            <p class="text-sm text-gray-500 mt-2 line-clamp-2">
+                            <p class="text-sm text-gray-500 mt-2">
                                 {{ $product->description }}
                             </p>
 
@@ -86,13 +99,36 @@
                                 </p>
                             </div>
 
-                            <div class="mt-auto pt-4">
+                            <div class="mt-auto pt-4 space-y-2">
                                 <a
                                     href="{{ route('products.show', $product) }}"
-                                    class="block text-center bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+                                    class="block text-center bg-white text-gray-900 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
                                 >
                                     View Details
                                 </a>
+
+                                @if($product->stock > 0)
+                                    <form method="POST" action="{{ route('cart.store', $product) }}">
+                                        @csrf
+
+                                        <input type="hidden" name="quantity" value="1">
+
+                                        <button
+                                            type="submit"
+                                            class="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                @else
+                                    <button
+                                        type="button"
+                                        disabled
+                                        class="w-full bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed"
+                                    >
+                                        Out of Stock
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     @endforeach
